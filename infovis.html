@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Attendance Results</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ </head>
+ <body>
+  <div class="container">
+   <div class="table-responsive">
+    <div style="
+    background-color: #0a1f2b;
+    color: #a5cbcb;
+    font-family: 'Lucida Console';
+    padding-top: 14px;
+    padding-bottom: 25px;
+    margin: 8px 10px 10px;
+    border-radius: 7px;
+    box-shadow: 10px 10px 5px #aaaaaa
+    " >
+    <h1 align="center">Student Attendance Sheet Results</h1>
+     </div>
+    <br />
+    <div align="center">
+     <button type="button" name="load_data" id="load_data" class="btn btn-info">Load Data</button>
+    </div>
+    <br />
+    <div id="student_table" style="background-color: lightcyan">
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+
+<script>
+$(document).ready(function(){
+ $('#load_data').click(function(){
+  $.ajax({
+   url:"Attendance.csv",
+   dataType:"text",
+   success:function(data)
+   {
+    var student_data = data.split(/\r?\n|\r/);
+    var table_data = '<table class="table table-bordered table-striped">';
+    for(var count = 0; count<student_data.length; count++)
+    {
+
+     var cell_data = student_data[count].split(",");
+     table_data += '<tr>';
+     var present_count=0;
+     if(count==0) {
+      cell_data.push("Average");
+     }
+     if(count>0){
+      for(var i=0; i<cell_data.length; i++){
+      if(i>1){
+       if(cell_data[i] == '1'){
+        present_count++;
+       }
+      }
+     }
+      var dates = cell_data.length-2;
+      var average = parseFloat(present_count/dates*100) + "%";
+
+      cell_data.push(average);
+     }
+
+     for(var cell_count=0; cell_count<cell_data.length; cell_count++)
+     {
+      if(count === 0)
+      {
+       table_data += '<th>'+cell_data[cell_count]+'</th>';
+      }
+
+      else
+      {
+       table_data += '<td>'+cell_data[cell_count]+'</td>';
+      }
+     }
+     table_data += '</tr>';
+    }
+    table_data += '</table>';
+    $('#student_table').html(table_data);
+   }
+  });
+ });
+
+});
+</script>
